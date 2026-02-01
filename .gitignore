@@ -1,1 +1,18 @@
 .idea
+
+# START Ruler Generated Files
+/.agent/rules/ruler.md
+/.agent/rules/ruler.md.bak
+/.codex/config.json
+/.codex/config.json.bak
+/.codex/config.toml
+/.codex/config.toml.bak
+/.cursor/mcp.json
+/.cursor/mcp.json.bak
+/.trae/rules/project_rules.md
+/.trae/rules/project_rules.md.bak
+/AGENTS.md
+/AGENTS.md.bak
+/opencode.json
+/opencode.json.bak
+# END Ruler Generated Files
