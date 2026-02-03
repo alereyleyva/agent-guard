@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/alereyleyva/agent-guard/internal/config"
 	"github.com/alereyleyva/agent-guard/internal/normalize"
 )
 
@@ -22,6 +23,18 @@ func NewOpenAI(baseURL, apiKey string) *OpenAIProvider {
 		baseURL: baseURL,
 		apiKey:  apiKey,
 	}
+}
+
+func init() {
+	RegisterFactory("openai_compatible", openAIFactory)
+	RegisterFactory("openai", openAIFactory)
+}
+
+func openAIFactory(cfg config.ProviderConfig) (Provider, error) {
+	if cfg.BaseURL == "" {
+		return nil, fmt.Errorf("provider base_url is required")
+	}
+	return NewOpenAI(cfg.BaseURL, cfg.APIKey), nil
 }
 
 func (p *OpenAIProvider) Name() string {

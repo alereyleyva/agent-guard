@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/alereyleyva/agent-guard/internal/config"
 	"github.com/alereyleyva/agent-guard/internal/normalize"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/signer/v4"
@@ -61,6 +62,15 @@ func NewBedrock(region, endpoint, accessKeyID, secretAccessKey, sessionToken str
 		signer:   v4.NewSigner(),
 		creds:    awsCfg.Credentials,
 	}, nil
+}
+
+func init() {
+	RegisterFactory("bedrock", bedrockFactory)
+}
+
+func bedrockFactory(cfg config.ProviderConfig) (Provider, error) {
+	bedrockCfg := cfg.Bedrock
+	return NewBedrock(bedrockCfg.Region, bedrockCfg.Endpoint, bedrockCfg.AccessKeyID, bedrockCfg.SecretAccessKey, bedrockCfg.SessionToken)
 }
 
 func (p *BedrockProvider) Name() string {

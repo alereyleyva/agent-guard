@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/alereyleyva/agent-guard/internal/config"
 	"github.com/alereyleyva/agent-guard/internal/normalize"
 )
 
@@ -29,6 +30,25 @@ func NewOpenRouter(baseURL, apiKey, referer, title string) *OpenRouterProvider {
 		referer: referer,
 		title:   title,
 	}
+}
+
+func init() {
+	RegisterFactory("openrouter", openRouterFactory)
+}
+
+func openRouterFactory(cfg config.ProviderConfig) (Provider, error) {
+	apiKey := cfg.APIKey
+	baseURL := cfg.BaseURL
+	if cfg.OpenRouter.APIKey != "" {
+		apiKey = cfg.OpenRouter.APIKey
+	}
+	if cfg.OpenRouter.BaseURL != "" {
+		baseURL = cfg.OpenRouter.BaseURL
+	}
+	if apiKey == "" {
+		return nil, fmt.Errorf("openrouter api key is required")
+	}
+	return NewOpenRouter(baseURL, apiKey, cfg.OpenRouter.Referer, cfg.OpenRouter.Title), nil
 }
 
 func (p *OpenRouterProvider) Name() string {

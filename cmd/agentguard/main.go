@@ -27,29 +27,9 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	var prov provider.Provider
-	switch cfg.Provider.Type {
-	case "openai_compatible", "openai":
-		prov = provider.NewOpenAI(cfg.Provider.BaseURL, cfg.Provider.APIKey)
-	case "openrouter":
-		baseURL := cfg.Provider.OpenRouter.BaseURL
-		if baseURL == "" {
-			baseURL = cfg.Provider.BaseURL
-		}
-		apiKey := cfg.Provider.OpenRouter.APIKey
-		if apiKey == "" {
-			apiKey = cfg.Provider.APIKey
-		}
-		prov = provider.NewOpenRouter(baseURL, apiKey, cfg.Provider.OpenRouter.Referer, cfg.Provider.OpenRouter.Title)
-	case "bedrock":
-		bedrockCfg := cfg.Provider.Bedrock
-		var err error
-		prov, err = provider.NewBedrock(bedrockCfg.Region, bedrockCfg.Endpoint, bedrockCfg.AccessKeyID, bedrockCfg.SecretAccessKey, bedrockCfg.SessionToken)
-		if err != nil {
-			log.Fatalf("failed to initialize bedrock provider: %v", err)
-		}
-	default:
-		log.Fatalf("unsupported provider type: %s", cfg.Provider.Type)
+	prov, err := provider.NewFromConfig(cfg.Provider)
+	if err != nil {
+		log.Fatalf("failed to initialize provider: %v", err)
 	}
 
 	policyEngine := policy.NewEngine(cfg.Policy)
