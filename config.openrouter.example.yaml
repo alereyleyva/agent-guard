@@ -1,0 +1,19 @@
+listen: "127.0.0.1:8080"
+
+provider:
+  type: "openrouter"
+  openrouter:
+    api_key: "env:OPENROUTER_API_KEY"
+    referer: "https://example.com"
+    title: "AgentGuard"
+
+policy:
+  models:
+    allow:
+      - "openai/gpt-4o"
+      - "anthropic/claude-3.5-sonnet"
+    deny: []
+  tools:
+    allow: []
+    deny:
+      - "shell_exec"

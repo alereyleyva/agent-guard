@@ -95,3 +95,63 @@ func TestLoad_FileNotFound(t *testing.T) {
 		t.Error("Load() should return error for nonexistent file")
 	}
 }
+
+func TestLoad_OpenRouterRequiresAPIKey(t *testing.T) {
+	content := `
+listen: "127.0.0.1:8080"
+provider:
+  type: "openrouter"
+`
+	tmpDir := t.TempDir()
+	configPath := filepath.Join(tmpDir, "config.yaml")
+	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+		t.Fatalf("failed to write test config: %v", err)
+	}
+
+	_, err := Load(configPath)
+	if err == nil {
+		t.Error("Load() should return error when openrouter api key is missing")
+	}
+}
+
+func TestLoad_BedrockRequiresRegion(t *testing.T) {
+	content := `
+listen: "127.0.0.1:8080"
+provider:
+  type: "bedrock"
+  bedrock:
+    access_key_id: "test"
+    secret_access_key: "secret"
+`
+	tmpDir := t.TempDir()
+	configPath := filepath.Join(tmpDir, "config.yaml")
+	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+		t.Fatalf("failed to write test config: %v", err)
+	}
+
+	_, err := Load(configPath)
+	if err == nil {
+		t.Error("Load() should return error when bedrock region is missing")
+	}
+}
+
+func TestLoad_BedrockStaticCredsValidation(t *testing.T) {
+	content := `
+listen: "127.0.0.1:8080"
+provider:
+  type: "bedrock"
+  bedrock:
+    region: "us-east-1"
+    access_key_id: "test"
+`
+	tmpDir := t.TempDir()
+	configPath := filepath.Join(tmpDir, "config.yaml")
+	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+		t.Fatalf("failed to write test config: %v", err)
+	}
+
+	_, err := Load(configPath)
+	if err == nil {
+		t.Error("Load() should return error when bedrock secret_access_key is missing")
+	}
+}
